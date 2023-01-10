@@ -1232,11 +1232,12 @@ export default function App() {
             <InputLabel id="select-system-label">操作系统</InputLabel>
             <Select labelId="select-system-label" label="操作系统" value={system} onChange={e => {
               setSystem(e.target.value);
-              if (e.target.value == "Debian 10" || e.target.value == "Debian 11" || e.target.value == "Ubuntu 20.04" || e.target.value == "Ubuntu 22.04" || e.target.value == "Arch Linux") {
+              if (e.target.value == "debian-10" || e.target.value == "debian-11" || e.target.value == "ubuntu-20.04" || e.target.value == "ubuntu-22.04" || e.target.value == "arch-linux") {
                 setSystemType("Linux");
               }
-              if (e.target.value == "Windows Server 2022 简体中文版" || e.target.value == "Windows Server 2022 英文版") {
+              if (e.target.value == "windows-server-2022-sc" || e.target.value == "windows-server-2022-en") {
                 setSystemType("Windows");
+                setPassword("");
               }
             }}>
               {systems.map((r, i) =>
