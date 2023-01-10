@@ -52,17 +52,19 @@ import ServiceQuotas from "aws-sdk/clients/servicequotas";
 var ProxyAgent //This is a placeholder DO NOT USE!
 
 export default function App() {
-  //environments
+  //Environments
   const defaultRemote = process.env.NEXT_PUBLIC_DEFAULT_REMOTE || "/api";
 
-  const regions = ["us-east-2", "us-east-1", "us-west-1", "us-west-2", "af-south-1", "ap-east-1", "ap-southeast-3", "ap-south-1", "ap-northeast-3", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "ca-central-1", "eu-central-1", "eu-west-1", "eu-west-2", "eu-south-1", "eu-west-3", "eu-north-1", "me-south-1", "sa-east-1"];
-  const regionsDetail = ["US East (Ohio)", "US East (N. Virginia)", "US West (N. California)", "US West (Oregon)", "Africa (Cape Town)", "Asia Pacific (Hong Kong)", "Asia Pacific (Jakarta)", "Asia Pacific (Mumbai)", "Asia Pacific (Osaka)", "Asia Pacific (Seoul)", "Asia Pacific (Singapore)", "Asia Pacific (Sydney)", "Asia Pacific (Tokyo)", "Canada (Central)", "Europe (Frankfurt)", "Europe (Ireland)", "Europe (London)", "Europe (Milan)", "Europe (Paris)", "Europe (Stockholm)", "Middle East (Bahrain)", "South America (São Paulo)"];
-  const states = new Map([[0, "正在启动"], [16, "正在运行"], [32, "正在关机"], [48, "已终止"], [64, "正在停止"], [80, "已停止"]]);
-  const systemImageNameMap = new Map([["Debian 10", "debian-10-amd64-2022*"], ["Debian 11", "debian-11-amd64-2022*"], ["Ubuntu 20.04", "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-2022*"], ["Ubuntu 22.04", "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-2022*"], ["Arch Linux", "*"], ["Windows Server 2022 简体中文版", "Windows_Server-2022-Chinese_Simplified-Full-Base-*"], ["Windows Server 2022 英文版", "Windows_Server-2022-English-Full-Base-*"]]);
-  const systemImageOwnerMap = new Map([["Debian 10", "136693071363"], ["Debian 11", "136693071363"], ["Ubuntu 20.04", "099720109477"], ["Ubuntu 22.04", "099720109477"], ["Arch Linux", "647457786197"], ["Windows Server 2022 简体中文版", "801119661308"], ["Windows Server 2022 英文版", "801119661308"]]);
-  const systems = ["Debian 10", "Debian 11", "Ubuntu 20.04", "Ubuntu 22.04", "Arch Linux", "Windows Server 2022 简体中文版", "Windows Server 2022 英文版"];
+  //Informations
+  const regions = ["us-east-1", "us-east-2", "us-west-1", "us-west-2", "af-south-1", "ap-east-1", "ap-south-2", "ap-southeast-3", "ap-south-1", "ap-northeast-3", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "ca-central-1", "eu-central-1", "eu-west-1", "eu-west-2", "eu-south-1", "eu-west-3", "eu-south-2", "eu-north-1", "eu-central-2", "me-south-1", "me-central-1", "sa-east-1"];
+  const regionsDetail = ["US East (N. Virginia)", "US East (Ohio)", "US West (N. California)", "US West (Oregon)", "Africa (Cape Town)", "Asia Pacific (Hong Kong)", "Asia Pacific (Hyderabad)", "Asia Pacific (Jakarta)", "Asia Pacific (Mumbai)", "Asia Pacific (Osaka)", "Asia Pacific (Seoul)", "Asia Pacific (Singapore)", "Asia Pacific (Sydney)", "Asia Pacific (Tokyo)", "Canada (Central)", "Europe (Frankfurt)", "Europe (Ireland)", "Europe (London)", "Europe (Milan)", "Europe (Paris)", "Europe (Spain)", "Europe (Stockholm)", "Middle East (Zurich)", "Middle East (Bahrain)", "Middle East (UAE)", "South America (São Paulo)"];
+  const systems = ["debian-10", "debian-11", "ubuntu-20.04", "ubuntu-22.04", "arch-linux", "windows-server-2022-sc", "windows-server-2022-en"];
+  const systemsDetail = ["Debian 10", "Debian 11", "Ubuntu 20.04", "Ubuntu 22.04", "Arch Linux", "Windows Server 2022 简体中文版", "Windows Server 2022 英文版"];
+  const systemImageNameMap = new Map([["debian-10", "debian-10-amd64-2022*"], ["debian-11", "debian-11-amd64-2022*"], ["ubuntu-20.04", "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-2022*"], ["ubuntu-22.04", "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-2022*"], ["Arch Linux", "*"], ["windows-server-2022-sc", "Windows_Server-2022-Chinese_Simplified-Full-Base-*"], ["windows-server-2022-en", "Windows_Server-2022-English-Full-Base-*"]]);
+  const systemImageOwnerMap = new Map([["debian-10", "136693071363"], ["debian-11", "136693071363"], ["ubuntu-20.04", "099720109477"], ["ubuntu-22.04", "099720109477"], ["Arch Linux", "647457786197"], ["windows-server-2022-sc", "801119661308"], ["windows-server-2022-en", "801119661308"]]);
   const types = ["t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "t2.xlarge", "t2.2xlarge", "t3.nano", "t3.micro", "t3.small", "t3.medium", "t3.large", "t3.xlarge", "t3.2xlarge", "t3a.nano", "t3a.micro", "t3a.small", "t3a.medium", "t3a.large", "t3a.xlarge", "t3a.2xlarge", "c5.large", "c5.xlarge", "c5.2xlarge", "c5.4xlarge", "c5a.large", "c5a.xlarge", "c5a.2xlarge", "c5a.4xlarge", "c5a.8xlarge", "c5n.large", "c5n.xlarge", "c5n.2xlarge", "c5n.4xlarge"];
   const typesDetail = ["t2.nano (1c 0.5g Low)", "t2.micro (1c 1g Low to Moderate)", "t2.small (1c 2g Low to Moderate)", "t2.medium (2c 4g Low to Moderate)", "t2.large (2c 8g Low to Moderate)", "t2.xlarge (4c 16g Moderate)", "t2.2xlarge (8c 32g Moderate)", "t3.nano (2c 0.5g 5Gbps)", "t3.micro (2c 1g 5Gbps)", "t3.small (2c 2g 5Gbps)", "t3.medium (2c 4g 5Gbps)", "t3.large (2c 8g 5Gbps)", "t3.xlarge (4c 16g 5Gbps)", "t3.2xlarge (8c 32g 5Gbps)", "t3a.nano (2c 0.5g 5Gbps)", "t3a.micro (2c 1g 5Gbps)", "t3a.small (2c 2g 5Gbps)", "t3a.medium (2c 4g 5Gbps)", "t3a.large (2c 8g 5Gbps)", "t3a.xlarge (4c 16g 5Gbps)", "t3a.2xlarge (8c 32g 5Gbps)", "c5.large (2c 4g 10Gbps)", "c5.xlarge (4c 8g 10Gbps)", "c5.2xlarge (8c 16g 10Gbps)", "c5.4xlarge (16c 32g 10Gbps)", "c5a.large (2c 4g 10Gbps)", "c5a.xlarge (4c 8g 10Gbps)", "c5a.2xlarge (8c 16g 10Gbps)", "c5a.4xlarge (16c 32g 10Gbps)", "c5a.8xlarge (32c 64g 10Gbps)", "c5n.large (2c 5.25g 25Gbps)", "c5n.xlarge (4c 10.5g 25Gbps)", "c5n.2xlarge (8c 21g 25Gbps)", "c5n.4xlarge (16c 42g 25Gbps)"];
+  const instanceStates = new Map([[0, "正在启动"], [16, "正在运行"], [32, "正在关机"], [48, "已终止"], [64, "正在停止"], [80, "已停止"]]);
 
   //Credential States
   const [aki, setAki] = useState("");
@@ -161,10 +163,6 @@ export default function App() {
   }
 
   //Operations
-  function developmentTest() {
-    //For Development Test Use
-  }
-
   function getIp() {
     if (mode === 1 || mode === 3) {
       if (mode === 3) {
@@ -1056,17 +1054,6 @@ export default function App() {
           }} />
         </FormControl>
       </div>
-      {isShowAdvancedOptions ? (
-        <div>
-          <FormControl>
-            <Button sx={{ m: 1 }} variant="contained" size="small" onClick={() => {
-              developmentTest();
-            }}>Development Test</Button>
-          </FormControl>
-        </div>
-      ) : (
-        <></>
-      )}
       <div>
         <Collapse in={modeTipOpen}>
           <Alert severity="info" onClose={() => { setModeTipOpen(false) }}>
@@ -1076,7 +1063,6 @@ export default function App() {
             <div>远端模式：如果您的本地IP已遭滥用，使用远端模式可将凭证发送至远端服务器进行操作，匿名性更高</div>
             <div>您可以自行搭建远端服务器，具体方法请访问<Link underline="hover" href="https://github.com/hiDandelion/shizuku-launcher-next">项目仓库</Link>，如不填写远端地址将使用默认托管的服务器</div>
             <br />
-            <div>本地+代理模式：操作在本地完成，请求通过代理服务器转发至AWS（此模式暂不可用）</div>
             <div>远端+代理模式：操作在远端完成，请求通过代理服务器转发至AWS，匿名性最高</div>
             <div>您需要提供兼容的代理服务器地址，受支持的协议为：http/https/socks(v5)/socks5/socks4/pac</div>
             <div>正确的格式范例：https://username:password@your-proxy.com:port</div>
@@ -1084,33 +1070,38 @@ export default function App() {
           </Alert>
         </Collapse>
       </div>
-      <div>
-        <FormControl sx={{ m: 1 }}>
-          <Box>
-            <FormLabel id="mode-radio-buttons-group-label">运行模式</FormLabel>
-            <Button variant="text" size="small" startIcon={<HelpOutlineIcon />} onClick={() => {
-              setModeTipOpen(true);
-            }}>帮助</Button>
-          </Box>
-          <RadioGroup
-            row
-            aria-labelledby="mode-radio-buttons-group-label"
-            defaultValue={1}
-            onChange={e => {
-              setMode(parseInt(e.currentTarget.value))
-              setIpInfomation("");
-            }}
-          >
-            <FormControlLabel value={1} control={<Radio />} label="本地" />
-            <FormControlLabel value={2} control={<Radio />} label="远端" />
-            {
-              //Uncomment this when proxy-agent is ready to use
-              //<FormControlLabel value={3} control={<Radio />} label="本地+代理（高级用户）" />
-            }
-            <FormControlLabel value={4} control={<Radio />} label="远端+代理" />
-          </RadioGroup>
-        </FormControl>
-      </div>
+      {isShowAdvancedOptions ? (
+        <Typography sx={{ m: 1 }}>运行模式：本地</Typography>
+      ) : (
+        <div>
+          <FormControl sx={{ m: 1 }}>
+            <Box>
+              <FormLabel id="mode-radio-buttons-group-label">运行模式</FormLabel>
+              <Button variant="text" size="small" startIcon={<HelpOutlineIcon />} onClick={() => {
+                setModeTipOpen(true);
+              }}>帮助</Button>
+            </Box>
+            <RadioGroup
+              row
+              aria-labelledby="mode-radio-buttons-group-label"
+              defaultValue={1}
+              onChange={e => {
+                setMode(parseInt(e.currentTarget.value))
+                setIpInfomation("");
+              }}
+            >
+              <FormControlLabel value={1} control={<Radio />} label="本地" />
+              <FormControlLabel value={2} control={<Radio />} label="远端" />
+              {
+                //Uncomment this when proxy-agent is ready to use
+                //<FormControlLabel value={3} control={<Radio />} label="本地+代理（高级用户）" />
+              }
+              <FormControlLabel value={4} control={<Radio />} label="远端+代理" />
+
+            </RadioGroup>
+          </FormControl>
+        </div>
+      )}
       {mode === 2 ? (
         <>
           <div>
@@ -1183,7 +1174,8 @@ export default function App() {
         <FormGroup sx={{ m: 1 }} >
           <FormControlLabel control={<Checkbox size="small" checked={isShowAdvancedOptions} onChange={(e) => {
             setIsShowAdvancedOptions(e.target.checked);
-          }} />} label={<Typography variant="subtitle2">Advanced Options (Currently Only Local Mode)</Typography>} />
+            setMode(1);
+          }} />} label={<Typography variant="subtitle2">专家模式</Typography>} />
         </FormGroup>
       </div>
       <Dialog
@@ -1218,9 +1210,15 @@ export default function App() {
           <Select labelId="select-region-label" label="地区" value={liRegion} onChange={e => {
             setLiRegion(e.target.value);
           }}>
-            {regions.map((r, i) =>
-              <MenuItem key={i} value={r}>{regionsDetail[i]}</MenuItem>
-            )}
+            {isShowAdvancedOptions ?
+              regions.map((r, i) =>
+                <MenuItem key={i} value={r}>{regions[i]}</MenuItem>
+              )
+              :
+              regions.map((r, i) =>
+                <MenuItem key={i} value={r}>{regionsDetail[i]}</MenuItem>
+              )
+            }
           </Select>
         </FormControl>
         {isShowAdvancedOptions ? (
@@ -1234,22 +1232,23 @@ export default function App() {
             <InputLabel id="select-system-label">操作系统</InputLabel>
             <Select labelId="select-system-label" label="操作系统" value={system} onChange={e => {
               setSystem(e.target.value);
-              if (e.target.value == "Debian 10" || e.target.value == "Debian 11" || e.target.value == "Ubuntu 20.04" || e.target.value == "Ubuntu 22.04" || e.target.value == "Arch Linux") {
+              if (e.target.value == "debian-10" || e.target.value == "debian-11" || e.target.value == "ubuntu-20.04" || e.target.value == "ubuntu-22.04" || e.target.value == "arch-linux") {
                 setSystemType("Linux");
               }
-              if (e.target.value == "Windows Server 2022 简体中文版" || e.target.value == "Windows Server 2022 英文版") {
+              if (e.target.value == "windows-server-2022-sc" || e.target.value == "windows-server-2022-en") {
                 setSystemType("Windows");
+                setPassword("");
               }
             }}>
               {systems.map((r, i) =>
-                <MenuItem key={i} value={r}>{r}</MenuItem>
+                <MenuItem key={i} value={r}>{systemsDetail[i]}</MenuItem>
               )}
             </Select>
           </FormControl>
         )}
         {isShowAdvancedOptions ? (
           <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
-            <TextField label="Instance Type" variant="outlined" size="small" onChange={(e) => {
+            <TextField label="实例类型" variant="outlined" size="small" onChange={(e) => {
               setType(e.target.value);
             }} />
           </FormControl>
@@ -1285,7 +1284,7 @@ export default function App() {
         </div>
         {isShowAdvancedOptions ? (
           <div>
-            <FormControl sx={{ m: 1, minWidth: 600 }}>
+            <FormControl sx={{ m: 1, width: 0.9, maxWidth: 600 }}>
               <TextField label="User Data" variant="outlined" size="small" multiline onChange={(e) => {
                 setUserdata(e.target.value);
               }} />
@@ -1317,9 +1316,15 @@ export default function App() {
           <Select labelId="select-region-label" label="地区" value={gqRegion} onChange={e => {
             setGqRegion(e.target.value);
           }}>
-            {regions.map((r, i) =>
-              <MenuItem key={i} value={r}>{regionsDetail[i]}</MenuItem>
-            )}
+            {isShowAdvancedOptions ?
+              regions.map((r, i) =>
+                <MenuItem key={i} value={r}>{regions[i]}</MenuItem>
+              )
+              :
+              regions.map((r, i) =>
+                <MenuItem key={i} value={r}>{regionsDetail[i]}</MenuItem>
+              )
+            }
           </Select>
         </FormControl>
       </div>
@@ -1346,9 +1351,15 @@ export default function App() {
           <Select labelId="select-region-label" label="地区" value={ciRegion} onChange={e => {
             setCiRegion(e.target.value);
           }}>
-            {regions.map((r, i) =>
-              <MenuItem key={i} value={r}>{regionsDetail[i]}</MenuItem>
-            )}
+            {isShowAdvancedOptions ?
+              regions.map((r, i) =>
+                <MenuItem key={i} value={r}>{regions[i]}</MenuItem>
+              )
+              :
+              regions.map((r, i) =>
+                <MenuItem key={i} value={r}>{regionsDetail[i]}</MenuItem>
+              )
+            }
           </Select>
         </FormControl>
       </div>
@@ -1378,7 +1389,7 @@ export default function App() {
               {instances.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.id}</TableCell>
-                  <TableCell>{states.get(row.state)}</TableCell>
+                  <TableCell>{instanceStates.get(row.state)}</TableCell>
                   <TableCell>{row.ip}</TableCell>
                   <TableCell>{row.type}</TableCell>
                   <TableCell>{row.platform}</TableCell>

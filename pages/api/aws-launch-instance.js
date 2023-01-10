@@ -2,8 +2,8 @@ var AWS = require('aws-sdk');
 var proxyAgent = require('proxy-agent');
 
 export default function handler(req, res) {
-    const systemImageNameMap = new Map([["Debian 10", "debian-10-amd64-2022*"], ["Debian 11", "debian-11-amd64-2022*"], ["Ubuntu 20.04", "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-2022*"], ["Ubuntu 22.04", "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-2022*"], ["Arch Linux", "*"], ["Windows Server 2022 简体中文版", "Windows_Server-2022-Chinese_Simplified-Full-Base-*"], ["Windows Server 2022 英文版", "Windows_Server-2022-English-Full-Base-*"]]);
-    const systemImageOwnerMap = new Map([["Debian 10", "136693071363"], ["Debian 11", "136693071363"], ["Ubuntu 20.04", "099720109477"], ["Ubuntu 22.04", "099720109477"], ["Arch Linux", "647457786197"], ["Windows Server 2022 简体中文版", "801119661308"], ["Windows Server 2022 英文版", "801119661308"]]);
+    const systemImageNameMap = new Map([["debian-10", "debian-10-amd64-2022*"], ["debian-11", "debian-11-amd64-2022*"], ["ubuntu-20.04", "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-2022*"], ["ubuntu-22.04", "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-2022*"], ["Arch Linux", "*"], ["windows-server-2022-sc", "Windows_Server-2022-Chinese_Simplified-Full-Base-*"], ["windows-server-2022-en", "Windows_Server-2022-English-Full-Base-*"]]);
+    const systemImageOwnerMap = new Map([["debian-10", "136693071363"], ["debian-11", "136693071363"], ["ubuntu-20.04", "099720109477"], ["ubuntu-22.04", "099720109477"], ["Arch Linux", "647457786197"], ["windows-server-2022-sc", "801119661308"], ["windows-server-2022-en", "801119661308"]]);
     AWS.config = new AWS.Config();
     AWS.config.update(
         {
