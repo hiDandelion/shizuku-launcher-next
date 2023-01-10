@@ -2,7 +2,7 @@ import clientPromise from "../../../lib/mongodb";
 import { verifyAuthenticationResponse } from '@simplewebauthn/server';
 import base64url from 'base64url';
 
-const domain = ["localhost", "shizuku-launcher-next-git-dev-hidandelion.vercel.app"];
+const domain = "shizuku-launcher-next-git-dev-hidandelion.vercel.app";
 const origin = ["http://localhost:3000", "https://shizuku-launcher-next-git-dev-hidandelion.vercel.app"];
 
 export default async function handler(req, res) {

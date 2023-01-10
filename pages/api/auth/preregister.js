@@ -1,7 +1,7 @@
 import clientPromise from "../../../lib/mongodb";
 import { generateRegistrationOptions } from '@simplewebauthn/server';
 
-const domain = ["localhost", "shizuku-launcher-next-git-dev-hidandelion.vercel.app"];
+const domain = "shizuku-launcher-next-git-dev-hidandelion.vercel.app";
 const appName = "Shizuku Launcher";
 
 export default async function handler(req, res) {
