@@ -1070,39 +1070,38 @@ export default function App() {
           </Alert>
         </Collapse>
       </div>
-      <div>
-        <FormControl sx={{ m: 1 }}>
-          <Box>
-            <FormLabel id="mode-radio-buttons-group-label">运行模式</FormLabel>
-            <Button variant="text" size="small" startIcon={<HelpOutlineIcon />} onClick={() => {
-              setModeTipOpen(true);
-            }}>帮助</Button>
-          </Box>
-          <RadioGroup
-            row
-            aria-labelledby="mode-radio-buttons-group-label"
-            defaultValue={1}
-            onChange={e => {
-              setMode(parseInt(e.currentTarget.value))
-              setIpInfomation("");
-            }}
-          >
-            <FormControlLabel value={1} control={<Radio />} label="本地" />
-            {isShowAdvancedOptions ? (
-              <></>
-            ) : (
-              <>
-                <FormControlLabel value={2} control={<Radio />} label="远端" />
-                {
-                  //Uncomment this when proxy-agent is ready to use
-                  //<FormControlLabel value={3} control={<Radio />} label="本地+代理（高级用户）" />
-                }
-                <FormControlLabel value={4} control={<Radio />} label="远端+代理" />
-              </>
-            )}
-          </RadioGroup>
-        </FormControl>
-      </div>
+      {isShowAdvancedOptions ? (
+        <Typography sx={{ m: 1 }}>运行模式：本地</Typography>
+      ) : (
+        <div>
+          <FormControl sx={{ m: 1 }}>
+            <Box>
+              <FormLabel id="mode-radio-buttons-group-label">运行模式</FormLabel>
+              <Button variant="text" size="small" startIcon={<HelpOutlineIcon />} onClick={() => {
+                setModeTipOpen(true);
+              }}>帮助</Button>
+            </Box>
+            <RadioGroup
+              row
+              aria-labelledby="mode-radio-buttons-group-label"
+              defaultValue={1}
+              onChange={e => {
+                setMode(parseInt(e.currentTarget.value))
+                setIpInfomation("");
+              }}
+            >
+              <FormControlLabel value={1} control={<Radio />} label="本地" />
+              <FormControlLabel value={2} control={<Radio />} label="远端" />
+              {
+                //Uncomment this when proxy-agent is ready to use
+                //<FormControlLabel value={3} control={<Radio />} label="本地+代理（高级用户）" />
+              }
+              <FormControlLabel value={4} control={<Radio />} label="远端+代理" />
+
+            </RadioGroup>
+          </FormControl>
+        </div>
+      )}
       {mode === 2 ? (
         <>
           <div>
@@ -1175,7 +1174,8 @@ export default function App() {
         <FormGroup sx={{ m: 1 }} >
           <FormControlLabel control={<Checkbox size="small" checked={isShowAdvancedOptions} onChange={(e) => {
             setIsShowAdvancedOptions(e.target.checked);
-          }} />} label={<Typography variant="subtitle2">高级模式</Typography>} />
+            setMode(1);
+          }} />} label={<Typography variant="subtitle2">专家模式</Typography>} />
         </FormGroup>
       </div>
       <Dialog
@@ -1283,7 +1283,7 @@ export default function App() {
         </div>
         {isShowAdvancedOptions ? (
           <div>
-            <FormControl sx={{ m: 1, minWidth: 0.5 }}>
+            <FormControl sx={{ m: 1, width: 0.9, maxWidth: 600 }}>
               <TextField label="User Data" variant="outlined" size="small" multiline onChange={(e) => {
                 setUserdata(e.target.value);
               }} />
